@@ -10,7 +10,7 @@ function cancelAxios(key: string): void {
     if (axiosCancelMap[key]) {
         axiosCancelMap[key].cancel('isCanceledRequest');
         if (process.env.NODE_ENV === 'development') {
-            console.warn(`[axios-easy-ext]请求已被取消：${key}`);
+            console.warn(`[axios-repeat]请求已被取消：${key}`);
         }
         delete axiosCancelMap[key];
     }
@@ -41,7 +41,7 @@ export function cancelableAxios(adapter: AxiosAdapter): AxiosAdapter {
                 (cancelable || onlySwitchRouteCancelable) &&
                 process.env.NODE_ENV === 'development'
             ) {
-                console.warn(`[axios-easy-ext]当前请求被锁定，不能取消请求：${urlKey}`);
+                console.warn(`[axios-repeat]当前请求被锁定，不能取消请求：${urlKey}`);
             }
             return adapter(config);
         }

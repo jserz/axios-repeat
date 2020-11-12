@@ -16,7 +16,7 @@ export default function addCacheItem(config: ICacheDataArguments): ICacheItem[] 
     // 缓存数据达到最大条数时，删除第一条
     if (newCachePool.length === maxCahceNumber) {
         if (process.env.NODE_ENV === 'development') {
-            console.warn(`[axios-easy-ext]缓存数据已经超过 ${maxCahceNumber} 条，删除最先缓存的数据：${urlKey}`);
+            console.warn(`[axios-repeat]缓存数据已经超过 ${maxCahceNumber} 条，删除最先缓存的数据：${urlKey}`);
         }
         newCachePool.shift();
     }

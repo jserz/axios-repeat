@@ -1,10 +1,10 @@
 {
-    "name": "axios-easy-ext",
+    "name": "axios-repeat",
     "version": "0.0.1",
     "description": "",
     "keywords": [],
-    "main": "dist/axios-easy-ext.umd.js",
-    "module": "dist/axios-easy-ext.es5.js",
+    "main": "dist/axios-repeat.umd.js",
+    "module": "dist/axios-repeat.es5.js",
     "typings": "dist/types/index.d.ts",
     "files": [
         "dist"
@@ -12,7 +12,7 @@
     "author": "jserz <rnjnfns8@126.com>",
     "repository": {
         "type": "git",
-        "url": "https://github.com/jserz/axios-easy-ext.git"
+        "url": "https://github.com/jserz/axios-repeat.git"
     },
     "license": "MIT",
     "engines": {

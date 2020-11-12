@@ -23,7 +23,7 @@ export function cacheableAxios(adapter: AxiosAdapter, options?: ICacheableOption
         // 不能缓存或被锁定，则直接返回
         if (!cacheable || lockable) {
             if (lockable && cacheable && process.env.NODE_ENV === 'development') {
-                console.warn(`[axios-easy-ext]当前请求被锁定，不能缓存请求：${urlKey}`);
+                console.warn(`[axios-repeat]当前请求被锁定，不能缓存请求：${urlKey}`);
             }
             return adapter(config);
         }
@@ -38,7 +38,7 @@ export function cacheableAxios(adapter: AxiosAdapter, options?: ICacheableOption
             Date.now() < cache.expireTime
         ) {
             if (process.env.NODE_ENV === 'development') {
-                console.log(`[axios-easy-ext]缓存数据已经存在，直接取缓存数据：${urlKey}`);
+                console.log(`[axios-repeat]缓存数据已经存在，直接取缓存数据：${urlKey}`);
             }
             return cache.responsePromise;
         }

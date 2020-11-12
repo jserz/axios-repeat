@@ -1,6 +1,6 @@
-# axios-easy-ext
+# axios-repeat
 
-axios 扩展，包括取消请求的扩展、锁定请求的扩展、缓存请求的扩展等。
+对重复的 axios 请求的处理，包括取消请求、锁定请求、缓存请求。
 
 ## 功能
 
@@ -12,19 +12,17 @@ axios 扩展，包括取消请求的扩展、锁定请求的扩展、缓存请�
 ## 安装
 
 ```
-yarn add axios-easy-ext
+yarn add axios-repeat
 ```
 
 ## 示例
 
-### axios
-
-#### 扩展 axios
+### 封装 axios
 
 ```js
 // http.js
 import axios from 'axios';
-import { axiosExtensions } from 'axios-easy-ext';
+import { axiosExtensions } from 'axios-repeat';
 const {
     cancelableAxios,
     isCancel,
@@ -73,7 +71,7 @@ export default function ajax(config) {
 }
 ```
 
-#### 使用
+### 使用
 
 -   可以取消的请求
 
@@ -101,7 +99,7 @@ queryData()
 ```js
 import React from 'react';
 import { Route, Switch, BrowserRouter } from 'dva/router';
-import { axiosExtensions } from 'axios-easy-ext';
+import { axiosExtensions } from 'axios-repeat';
 import pageA from './pageA';
 import pageB from './pageB';
 
@@ -174,7 +172,7 @@ getCity().then(() => {
 
 ```
 
-## axios-easy-ext api
+## axios-repeat api
 
 ### axios extensions
 
@@ -195,7 +193,7 @@ getCity().then(() => {
 -   cacheableAxios(axiosAdapter)：缓存请求的扩展
 -   deleteCacheItem(url): 删除缓存项
 
-## axios-easy-ext config
+## axios-repeat config
 
 ```js
 

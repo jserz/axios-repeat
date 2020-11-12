@@ -22,12 +22,13 @@ export function lockableAxios(adapter: AxiosAdapter): AxiosAdapter {
         if (requestingUrls[urlKey]) {
             const message = `请不要重复提交表单：${urlKey}`;
             if (process.env.NODE_ENV === 'development') {
-                console.warn(`[axios-easy-ext]${message}`);
+                console.warn(`[axios-repeat]${message}`);
             }
             return Promise.reject({ __IS_REPEAT_SUBMIT__: true, message });
         }
         requestingUrls[urlKey] = true;
         return adapter(config).finally(() => {
+            // 不是入列的提交请求
             if (!isEnqueueSubmit) {
                 deleteLockedUrl(urlKey);
             }
