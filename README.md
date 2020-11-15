@@ -4,8 +4,8 @@
 
 ## 功能
 
+-   切换路由时，取消所有未完成的请求
 -   重复请求时，取消未完成的前请求
--   切换路由时，取消未完成的所有请求
 -   锁定请求，防止重复提交请求
 -   缓存请求数据
 
@@ -13,6 +13,10 @@
 
 ```
 yarn add axios-repeat
+
+或
+
+npm install axios-repeat
 ```
 
 ## 示例
@@ -22,30 +26,29 @@ yarn add axios-repeat
 ```js
 // http.js
 import axios from 'axios';
-import { axiosExtensions } from 'axios-repeat';
-const {
-    cancelableAxios,
-    isCancel,
+import {
     lockableAxios,
     isRepeatSubmit,
+    cancelableAxios,
+    isCancel,
     cacheableAxios,
-} = axiosExtensions;
+} from 'axios-repeat';
 
-// 这个适配器，可以是自定义或用 axios 默认的
+// 适配器，可以是自定义或用 axios 默认的
 let adapter = axios.defaults.adapter;
-// 使用不能重复提交请求扩展，如果重复提交，后一个提交请求不能发起
+// 锁定请求扩展，锁定请求完成之前不能再发起请求，用于防止重复提交请求
 adapter = lockableAxios(adapter);
-// 使用可以取消请求扩展，如果前一个请求没有完成，后一个请求又发起，则会取消前一个请求
+// 取消请求扩展，如果前一个请求没有完成，后一个请求又发起，则会取消前一个请求
 adapter = cancelableAxios(adapter, {
-    // 表示切换路由时，取消未完成的请求
-    RouteCancelable: true,
+    // 切换路由时，取消所有未完成的请求
+    switchRouteCancelable: true,
 });
-// 使用可缓存请求扩展，如果前一个请求已经完成，同时后一个请求和前一个请求参数相同，则可以取缓存数据
+// 缓存请求扩展，如果前一个请求已经完成，同时后一个请求和前一个请求参数相同，则可以取缓存数据
 adapter = cacheableAxios(adapter, {
     // 缓存请求的过期间隔，单位毫秒，默认 2分钟（120000ms）
     cacheTimeout: 120000,
     // 获取数据之后是否需要缓存
-    isNeedCache: res => {
+    isNeedCache: (res) => {
         return res.success;
     },
     // 最多缓存的数据条数, 默认 50 条
@@ -98,7 +101,7 @@ queryData()
 ```js
 import ajax from './http.js'
 
-// 不能重复的提交请求
+// 可锁定的提交请求
 const postData = data => {
     return ajax({
         url: '/api/post-data'
@@ -140,33 +143,46 @@ getCity().then(() => {
 
 ## axios-repeat api
 
-### axios extensions
+### axios 扩展
 
-#### 取消请求
+#### 取消请求扩展
 
--   cancelableAxios(axiosAdapter, { switchRouteCancelable }): 取消请求的扩展
+-   cancelableAxios(axiosAdapter, options): 取消请求的扩展
+    - axiosAdapter：自定义或用 axios 默认的适配器
+    - options
+        - switchRouteCancelable：切换路由时，是否取消所有未完成的请求
 -   cancelAllAxios(): 取消所有未完成的请求
 -   isCancel(error): 判断该请求是否被取消，在 catch 中，通过 error 判断
+    - error：报错对象
 
-#### 不能重复提交请求
+#### 锁定请求扩展
 
 -   lockableAxios(axiosAdapter): 不能重复提交请求的扩展
+    - axiosAdapter：自定义或用 axios 默认的适配器
 -   deleteLockedUrl(url): 手动删除请求，入列的提交请求需要使用
+    - url：string，请求地址
 -   isRepeatSubmit(error): 判断该请求是否因为重复提交被阻止，在 catch 中，通过 error 判断
+    - error：报错对象
 
-#### 缓存请求
+#### 缓存请求扩展
 
--   cacheableAxios(axiosAdapter, { cacheTimeout, isNeedCache, maxCahceNumber })：缓存请求的扩展
+-   cacheableAxios(axiosAdapter, options)：缓存请求的扩展
+    - axiosAdapter：自定义或用 axios 默认的适配器
+    - options
+        - cacheTimeout：boolean，缓存请求的过期间隔，单位毫秒，默认为 2 分钟（120000 ms）
+        - isNeedCache：(res: any) => boolean, 获取数据之后是否能缓存
+        - maxCahceNumber: number，最多缓存的数据条数, 默认 50 条
 -   deleteCacheItem(url): 删除缓存项
+    - url：string，请求地址
 
-## axios-repeat config
+## 请求配置（config）
 
 ```js
 
 const requestExtensionsConfig = {
     // 重复时，取消未完成的前请求
     repeatCancelable: boolean,
-    // 切换路由时，是否取消未完成的请求
+    // 切换路由时，是否取消所有未完成的请求
     switchRouteCancelable: boolean,
     // 是否不能重复提交请求
     lockable: boolean,
@@ -181,12 +197,6 @@ const requestExtensionsConfig = {
 // axios
 ajax({
     ...axios.config,
-    ...requestExtensionsConfig,
-})
-
-// fetch
-fetch(url, {
-    ...fetch.config,
     ...requestExtensionsConfig,
 })
 ```

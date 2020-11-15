@@ -32,14 +32,14 @@ export interface ICancelMap {
 
 // 扩展 AxiosRequestConfig 接口
 export interface IAxiosRequestConfigExtend extends AxiosRequestConfig {
-    // 是否不能重复请求
-    lockable?: boolean;
-    // 不能重复提交请求时，是否为入列的提交请求
-    isEnqueueSubmit?: boolean;
-    // 重复时，是否可以取消请求
+    // 重复时，是否可以取消未完成的请求
     repeatCancelable?: boolean;
-    // 切换路由时，是否可以取消
+    // 切换路由时，是否可以取消未完成的请求
     switchRouteCancelable?: boolean;
+    // 是否锁定请求，锁定请求完成之前不能再发起请求
+    lockable?: boolean;
+    // 锁定时，是否为入列的提交请求
+    isEnqueueSubmit?: boolean;
     // 是否可以缓存请求
     cacheable?: boolean;
     // 是否强制更新缓存

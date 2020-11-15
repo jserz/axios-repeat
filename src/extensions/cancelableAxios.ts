@@ -37,6 +37,7 @@ function listenHrefChange() {
             mutations.forEach((mutation) => {
                 if (oldHref != document.location.href) {
                     oldHref = document.location.href;
+                    // 取消所有未完成的请求
                     cancelAllAxios();
                 }
             });
@@ -51,6 +52,7 @@ function listenHrefChange() {
     });
 }
 interface IOptions {
+    // 切换路由时，是否可以取消所有未完成的请求
     switchRouteCancelable?: boolean;
 }
 
