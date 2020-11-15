@@ -28,25 +28,54 @@ export function isCancel(value: any) {
     return axios.isCancel(value);
 }
 
+// 监控路由变化
+function listenHrefChange() {
+    let oldHref = document.location.href;
+    window.addEventListener('load', () => {
+        const body = document.querySelector('body');
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (oldHref != document.location.href) {
+                    oldHref = document.location.href;
+                    cancelAllAxios();
+                }
+            });
+        });
+
+        const config = {
+            childList: true,
+            subtree: true,
+        };
+
+        body && observer.observe(body, config);
+    });
+}
+interface IOptions {
+    switchRouteCancelable?: boolean;
+}
+
 // 可取消的请求
-export function cancelableAxios(adapter: AxiosAdapter): AxiosAdapter {
+export function cancelableAxios(adapter: AxiosAdapter, options?: IOptions): AxiosAdapter {
+    if (options?.switchRouteCancelable) {
+        listenHrefChange();
+    }
     return (config: IAxiosRequestConfigExtend): AxiosPromise<any> => {
-        const { url, lockable, cancelable, onlySwitchRouteCancelable } = config;
+        const { url, lockable, repeatCancelable } = config;
+        const switchRouteCancelable =
+            config.switchRouteCancelable === undefined
+                ? options?.switchRouteCancelable
+                : config.switchRouteCancelable;
         // 完整的请求地址
         let urlKey: string = getAbsoluteUrl(url || '');
         // 不支持取消或被锁定，直接返回
-        if ((!cancelable && !onlySwitchRouteCancelable) || lockable) {
-            if (
-                lockable &&
-                (cancelable || onlySwitchRouteCancelable) &&
-                process.env.NODE_ENV === 'development'
-            ) {
+        if ((!repeatCancelable && !switchRouteCancelable) || lockable) {
+            if (lockable && repeatCancelable && process.env.NODE_ENV === 'development') {
                 console.warn(`[axios-repeat]当前请求被锁定，不能取消请求：${urlKey}`);
             }
             return adapter(config);
         }
-        // 只有切换路由时才可以取消，则让 urlKey 唯一 
-        if (!cancelable && onlySwitchRouteCancelable) {
+        // 只有切换路由时才可以取消，则让 urlKey 唯一
+        if (!repeatCancelable && switchRouteCancelable) {
             urlKey = `${urlKey}-${uuidv4()}`;
         }
         // 取消未完成的请求

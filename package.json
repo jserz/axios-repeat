@@ -1,6 +1,6 @@
 {
     "name": "axios-repeat",
-    "version": "0.0.1",
+    "version": "0.0.3",
     "description": "",
     "keywords": [],
     "main": "dist/axios-repeat.umd.js",

@@ -36,10 +36,10 @@ export interface IAxiosRequestConfigExtend extends AxiosRequestConfig {
     lockable?: boolean;
     // 不能重复提交请求时，是否为入列的提交请求
     isEnqueueSubmit?: boolean;
-    // 是否可以取消请求
-    cancelable?: boolean;
-    // 是否只有切换路由时才可以取消
-    onlySwitchRouteCancelable?: boolean;
+    // 重复时，是否可以取消请求
+    repeatCancelable?: boolean;
+    // 切换路由时，是否可以取消
+    switchRouteCancelable?: boolean;
     // 是否可以缓存请求
     cacheable?: boolean;
     // 是否强制更新缓存
