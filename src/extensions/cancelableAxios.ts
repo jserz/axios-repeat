@@ -1,7 +1,7 @@
-import axios, { AxiosAdapter, AxiosPromise } from 'axios';
-import getAbsoluteUrl from '../utils/getAbsoluteUrl';
 import { v4 as uuidv4 } from '@lukeed/uuid';
+import axios, { AxiosAdapter, AxiosPromise, AxiosResponse } from 'axios';
 import { IAxiosRequestConfigExtend, ICancelMap } from '../types';
+import getAbsoluteUrl from '../utils/getAbsoluteUrl';
 
 // 保存未完成的请求的取消对象
 const axiosCancelMap: ICancelMap = {};
@@ -86,8 +86,9 @@ export function cancelableAxios(adapter: AxiosAdapter, options?: IOptions): Axio
         const source = CancelToken.source();
         axiosCancelMap[urlKey] = source;
         config.cancelToken = source.token;
-        return adapter(config).finally(() => {
+        return adapter(config).then((res: AxiosResponse<any>) => {
             delete axiosCancelMap[urlKey];
+            return res;
         });
     };
 }
